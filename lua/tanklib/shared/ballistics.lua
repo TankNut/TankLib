@@ -1,3 +1,5 @@
+-- Based on https://github.com/forrestthewoods/lib_fts/blob/master/code/fts_ballistic_trajectory.cs
+
 local ballistics = {}
 
 local function IsZero(d)
