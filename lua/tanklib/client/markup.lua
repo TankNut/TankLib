@@ -18,7 +18,7 @@ function class.Static:RegisterTag(name, data)
 		end
 	end
 
-	Tags[string.lower(name)] = tab
+	self.Tags[string.lower(name)] = tab
 end
 
 function class.Static:SetDefaults(data)
