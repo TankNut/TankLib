@@ -1,4 +1,4 @@
-local class = TankLib.Class("TankLib.Grid")
+local class = TankLib.Class:New("TankLib.Grid")
 
 function class:Initialize()
 	local mt = {}

@@ -1,6 +1,8 @@
 -- Based on https://github.com/kikito/middleclass 4.1.1
 
-local instances = TankLib.ClassInstances or setmetatable({}, {
+local class = {}
+
+class.Instances = TankLib.Class and TankLib.Class.Instances or setmetatable({}, {
 	__mode = "k"
 })
 
@@ -146,7 +148,7 @@ local _DefaultMixin = {
 
 			instance:Initialize(...)
 
-			instances[instance] = true
+			class.Instances[instance] = true
 
 			return instance
 		end,
@@ -180,8 +182,8 @@ local _DefaultMixin = {
 	}
 }
 
-function TankLib.Class(name, super)
+function class:New(name, super)
 	return super and super:Subclass(name) or _Mixin(_CreateClass(name), _DefaultMixin)
 end
 
-TankLib.ClassInstances = instances
+TankLib.Class = class

@@ -1,4 +1,4 @@
-local class = TankLib.Class("TankLib.Queue")
+local class = TankLib.Class:New("TankLib.Queue")
 
 function class:Initialize(...)
 	self.First = 0

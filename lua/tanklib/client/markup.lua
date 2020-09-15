@@ -1,4 +1,4 @@
-local class = TankLib.Class("TankLib.Markup")
+local class = TankLib.Class:New("TankLib.Markup")
 
 class.Static.Tags = {}
 
@@ -220,7 +220,7 @@ local function _Parse(unparsed, maxwidth)
 					end
 
 					-- Clear excess spaces from the start of the next line
-					local m = 1 
+					local m = 1
 
 					space = false
 

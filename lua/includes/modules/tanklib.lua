@@ -4,7 +4,7 @@ function TankLib.Load()
 	local root = "TankLib"
 	local name = "TankLib"
 
-	function printf(str, ...)
+	local function printf(str, ...)
 		print(string.format(str, ...))
 	end
 
@@ -59,15 +59,15 @@ function TankLib.Load()
 end
 
 if CLIENT then
-	net.Receive("tanklib_reload", TankLib.Load)
+	net.Receive("TankLib.Reload", TankLib.Load)
 else
-	util.AddNetworkString("tanklib_reload")
+	util.AddNetworkString("TankLib.Reload")
 end
 
 concommand.Add("tanklib_reload", function()
 	TankLib.Load()
 
-	net.Start("tanklib_reload")
+	net.Start("TankLib.Reload")
 	net.Broadcast()
 end)
 
