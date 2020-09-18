@@ -16,9 +16,9 @@ local function _CreateIndexWrapper(aClass, func)
 			if val then
 				return val
 			elseif isfunction(func) then
-				return f(self, name)
+				return func(self, name)
 			else
-				return f[name]
+				return func[name]
 			end
 		end
 	end
@@ -95,7 +95,7 @@ local function _CreateClass(name, super)
 		__newindex = _DeclareInstanceMethod
 	})
 
-	for instance in pairs(instances) do
+	for instance in pairs(TankLib.Class.Instances) do
 		if instance.Class.Name == name then
 			instance.Class = aClass
 
@@ -159,7 +159,7 @@ local _DefaultMixin = {
 				_PropagateInstanceMethod(subclass, method, func)
 			end
 
-			Subclass.Initialize = function(instance, ...)
+			subclass.Initialize = function(instance, ...)
 				return self.Initialize(instance, ...)
 			end
 
@@ -187,3 +187,18 @@ function class:New(name, super)
 end
 
 TankLib.Class = class
+
+local mixins = {}
+
+-- Hooks mixin
+mixins.Hook = {}
+
+function mixins.Hook:IsValid()
+	return true
+end
+
+function mixins.Hook:Hook(event)
+	hook.Add(event, self, self[event])
+end
+
+TankLib.Class.Mixins = mixins
