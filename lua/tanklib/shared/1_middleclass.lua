@@ -2,6 +2,7 @@
 
 local class = {}
 
+class.NetworkTable = TankLib.Class and TankLib.Class.NetworkTable or {}
 class.Instances = TankLib.Class and TankLib.Class.Instances or setmetatable({}, {
 	__mode = "k"
 })

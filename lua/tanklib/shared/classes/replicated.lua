@@ -1,5 +1,3 @@
-TankLib.Class.NetworkTable = TankLib.Class.NetworkTable or {}
-
 local class = TankLib.Class:New("TankLib.Replicated")
 
 class.Static.RegisteredNetworkVars = {}
@@ -18,27 +16,34 @@ function class.Static:RegisterNetworkVar(name, default)
 	end
 end
 
-function class.Static:New(...)
-	local instance = self:Allocate()
-
-	if SERVER then
-		instance.NetworkID = table.insert(TankLib.Class.NetworkTable, instance)
-	end
-
-	instance.NetworkVars = {}
-	instance:Initialize(...)
-
-	if SERVER then
-		instance:Replicate()
-	end
-
-	TankLib.Class.Instances[instance] = true -- Used for lookups and as a 'ready' indicator
-
-	return instance
-end
-
 if CLIENT then
-	function class:Replicated() -- Called when first created on the client
+	function class.Static:New(id, vars)
+		local instance = self:Allocate()
+
+		instance.NetworkID = id
+		instance.NetworkVars = vars
+
+		instance:Initialize()
+
+		TankLib.Class.Instances[instance] = true
+		TankLib.Class.NetworkTable[id] = instance
+
+		return instance
+	end
+else
+	function class.Static:New(...)
+		local instance = self:Allocate()
+
+		instance.NetworkID = table.insert(TankLib.Class.NetworkTable, instance)
+		instance.NetworkVars = {}
+
+		instance:Initialize(...)
+		instance:Replicate()
+
+		TankLib.Class.Instances[instance] = true -- Used for lookups and as a 'ready' indicator
+		TankLib.Class.NetworkTable[instance.NetworkID] = instance
+
+		return instance
 	end
 end
 
@@ -49,7 +54,7 @@ function class:SetNetworkVar(name, val)
 	local new = val
 
 	if val == nil then
-		new = self.RegisteredNetworkVars[name]
+		new = self.Class.RegisteredNetworkVars[name]
 	end
 
 	self.NetworkVars[name] = val
@@ -65,7 +70,7 @@ function class:SetNetworkVar(name, val)
 end
 
 function class:GetNetworkVar(name)
-	return self.NetworkVars[name] or self.RegisteredNetworkVars[name]
+	return self.NetworkVars[name] or self.Class.RegisteredNetworkVars[name]
 end
 
 function class:NetworkVarChanged(var, old, new)
@@ -103,14 +108,7 @@ if CLIENT then
 	end)
 
 	TankLib.Netstream:Hook("TankLib.Replicated.Replicate", function(data)
-		local instance = TankLib.Class:GetByName(data.Class)()
-
-		instance.NetworkID = data.ID
-		instance.NetworkVars = data.Vars
-
-		TankLib.Class.NetworkTable[data.ID] = instance
-
-		instance:Replicated()
+		TankLib.Class:GetByName(data.Class)(data.ID, data.Vars)
 	end)
 end
 
