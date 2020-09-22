@@ -38,4 +38,14 @@ function meta:IsReady()
 	return ready[self]
 end
 
+function player.GetReady()
+	local players = player.GetHumans()
+
+	table.Filter(players, function(key, val)
+		return val:IsReady()
+	end)
+
+	return players
+end
+
 TankLib.PlayerReady = ready

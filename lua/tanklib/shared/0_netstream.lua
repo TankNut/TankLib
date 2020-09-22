@@ -83,7 +83,7 @@ else
 		local result = targets
 
 		if not targets then
-			result = player.GetAll()
+			result = player.GetHumans()
 		elseif TypeID(targets) == TYPE_RECIPIENTFILTER then
 			result = targets:GetPlayers()
 		elseif not istable(targets) then

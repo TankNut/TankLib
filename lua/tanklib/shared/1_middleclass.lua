@@ -6,6 +6,9 @@ class.Instances = TankLib.Class and TankLib.Class.Instances or setmetatable({}, 
 	__mode = "k"
 })
 
+class.Classes = {}
+class.Mixins = {}
+
 local function _CreateIndexWrapper(aClass, func)
 	if not func then
 		return aClass.__InstanceDictionary
@@ -103,6 +106,8 @@ local function _CreateClass(name, super)
 		end
 	end
 
+	class.Classes[name] = aClass
+
 	return aClass
 end
 
@@ -186,19 +191,10 @@ function class:New(name, super)
 	return super and super:Subclass(name) or _Mixin(_CreateClass(name), _DefaultMixin)
 end
 
+function class:GetByName(name)
+	return self.Classes[name]
+end
+
 TankLib.Class = class
-
-local mixins = {}
-
--- Hooks mixin
-mixins.Hook = {}
-
-function mixins.Hook:IsValid()
-	return true
-end
-
-function mixins.Hook:Hook(event)
-	hook.Add(event, self, self[event])
-end
-
-TankLib.Class.Mixins = mixins
+TankLib:LoadFolder("mixins")
+TankLib:LoadFolder("classes")
