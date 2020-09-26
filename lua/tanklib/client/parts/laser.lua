@@ -48,7 +48,7 @@ function class:PostDrawTranslucentRenderables()
 		return
 	end
 
-	local pos, ang = self:GetDrawPos()
+	local pos, ang = self:GetRenderPos()
 
 	local tr = util.TraceLine({
 		start = pos,

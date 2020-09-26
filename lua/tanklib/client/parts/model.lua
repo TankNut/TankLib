@@ -8,6 +8,8 @@ function class:Initialize()
 	self.Model = ""
 	self.Skin = 0
 
+	self.Scale = 1
+
 	self.Bonemerge = false
 
 	self:Hook("Think")
@@ -16,7 +18,11 @@ end
 function class:Cleanup()
 	TankLib.Part.Baseclass.Cleanup(self)
 
-	self.Entity:Remove()
+	if IsValid(self.Entity) then
+		self.Entity.RenderOverride = nil
+		self.Entity:SetNoDraw(true)
+		self.Entity:Remove()
+	end
 end
 
 function class:GetEntity() return self.Entity end
@@ -33,6 +39,9 @@ function class:GetBonemerge() return self.Bonemerge end
 function class:SetCentered(bool) self.Center = bool end
 function class:GetCentered() return self.Center end
 
+function class:SetScale(scale) self.Scale = scale self:CreateEntity() end
+function class:GetScale() return self.Scale end
+
 function class:CreateEntity()
 	if IsValid(self.Entity) then
 		self.Entity:Remove()
@@ -42,6 +51,8 @@ function class:CreateEntity()
 	self.Entity:SetNoDraw(false)
 
 	self.Entity:SetSkin(self.Skin)
+
+	self.Entity:SetModelScale(self.Scale)
 
 	if self.Bonemerge then
 		self.Entity:SetParent(self.Parent)
@@ -80,42 +91,34 @@ function class:Think()
 	end
 end
 
-function class:GetOrigin()
-	if self.Center and IsValid(self.Entity) then
-		return LerpVector(0.5, self.Entity:GetModelBounds()), angle_zero
-	end
+function class:GetBonePosition(bone)
+	local pos, ang = TankLib.Part.Baseclass.GetBonePosition(self, bone)
 
-	return TankLib.Part.Baseclass.GetOrigin(self)
-end
-
-function class:GetRenderOrigin()
-	if self.Bonemerge then
-		return self.Parent:WorldSpaceCenter(), self.Parent:GetAngles() -- WorldSpaceCenter instead of GetPos to fix some lighting issues where the csent's lighting origin ends up out of bounds
-	end
-
-	return TankLib.Part.Baseclass.GetRenderOrigin(self)
-end
-
-function class:GetBonePos(bone)
-	local pos, ang = LocalToWorld(-self:GetOrigin(), angle_zero, self:GetRenderPos())
-
-	if IsValid(self.Entity) then
+	if IsValid(self.Entity) and self.Bone then
 		self.Entity:SetPos(pos)
 		self.Entity:SetAngles(ang)
 
 		self.Entity:SetupBones()
 
-		local id = self.Entity:LookupBone(bone)
+		return self.Entity:GetBonePosition(self.Entity:LookupBone(bone))
+	end
 
-		return self.Entity:GetBonePosition(id)
+	return pos, ang
+end
+
+function class:GetDrawPos()
+	local pos, ang = self:GetRenderPos()
+
+	if self.Bonemerge then
+		return self.Parent:WorldSpaceCenter(), self.Parent:GetAngles()
+	elseif self.Center and IsValid(self.Entity) then
+		return LocalToWorld(-LerpVector(0.5, self.Entity:GetModelBounds()), angle_zero, pos, ang)
 	end
 
 	return pos, ang
 end
 
 function class:Draw()
-	TankLib.Part.Baseclass.Draw(self)
-
 	local ent = self.Entity
 
 	if not IsValid(ent) then

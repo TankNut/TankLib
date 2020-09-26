@@ -26,7 +26,7 @@ function class:PostDrawTranslucentRenderables()
 		return
 	end
 
-	local pos = self:GetDrawPos()
+	local pos = self:GetRenderPos()
 
 	render.SetMaterial(self.Sprite)
 	render.DrawSprite(pos, self.Size, self.Size, self.Color)

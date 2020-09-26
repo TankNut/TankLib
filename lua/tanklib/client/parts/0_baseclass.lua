@@ -11,20 +11,19 @@ function class:Initialize()
 	self.Pos = vector_origin
 	self.Ang = angle_zero
 
+	self.Bone = false
+
 	self.Translate = {TRANSLATE_RELATIVE, TRANSLATE_RELATIVE}
 	self.Debug = false
-
-	self.Bone = false
 end
 
 function class:Remove()
 	self:Cleanup()
 
+	TankLib.Part:Clear(self)
+
 	TankLib.Part:GetChildren(self.Parent)[self.ID] = nil
 	TankLib.Part.Instances[self.ID] = nil
-end
-
-function class:Update()
 end
 
 function class:IsValid()
@@ -53,42 +52,33 @@ function class:GetAngles() return self.Ang end
 function class:SetTranslation(pos, ang) self.Translate = {pos, ang} end
 function class:GetTranslation() return unpack(self.Translate) end
 
-function class:SetDebug(bool) self.Debug = bool end
-function class:GetDebug() return self.Debug end
-
 function class:SetBone(bone) self.Bone = bone end
 function class:GetBone() return self.Bone end
 
-function class:GetOrigin() -- Lets us override our origin, used to center props
-	return vector_origin
-end
+function class:SetDebug(bool) self.Debug = bool end
+function class:GetDebug() return self.Debug end
 
-function class:GetRenderOrigin()
-	local parent = self.Parent
-	local bone = self.Bone
+function class:GetBasePosition() -- Our position on our parent
+	local parent = self:GetParent()
+	local bone = self:GetBone()
 
 	if isentity(parent) then
 		if bone then
-			parent:SetupBones()
-
-			local id = parent:LookupBone(bone)
-
-			return parent:GetBonePosition(id)
+			return parent:GetBonePosition(parent:LookupBone(bone))
 		else
 			return parent:GetPos(), parent:GetAngles()
 		end
 	else
-		if bone then
-			return parent:GetBonePos(bone)
-		else
-			return parent:GetRenderOrigin()
-		end
+		return parent:GetBonePosition(bone)
 	end
 end
 
-function class:GetRenderPos()
-	local pos, ang = self:GetRenderOrigin()
+function class:GetBonePosition(bone)
+	return self:GetRenderPos()
+end
 
+function class:GetRenderPos()
+	local pos, ang = self:GetBasePosition()
 	local relative = {LocalToWorld(self.Pos, self.Ang, pos, ang)}
 	local modes = self.Translate
 
@@ -101,14 +91,10 @@ function class:GetRenderPos()
 	if modes[2] == TRANSLATE_RELATIVE then
 		ang = relative[2]
 	elseif modes[2] == TRANSLATE_ABSOLUTE then
-		ang = self.Ang
+		ang = ang + self.Ang
 	end
 
 	return pos, ang
-end
-
-function class:GetBonePos(bone)
-	return self:GetRenderPos()
 end
 
 function class:ShouldDraw()
@@ -131,15 +117,9 @@ function class:SetTranslationMode(pos, ang)
 	self.TranslationMode = {pos, ang}
 end
 
-function class:GetDrawPos()
-	return LocalToWorld(-self:GetOrigin(), angle_zero, self:GetRenderPos())
-end
-
 function class:Draw()
-	self:Update()
-
 	if self.Debug then
-		local pos, ang = self:GetDrawPos()
+		local pos, ang = self:GetRenderPos()
 
 		render.DrawLine(pos, pos + (ang:Forward() * 5), Color(255, 0, 0), true)
 		render.DrawLine(pos, pos + (ang:Right() * 5), Color(0, 255, 0), true)
