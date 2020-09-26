@@ -1,14 +1,13 @@
 -- Based on https://github.com/kikito/middleclass 4.1.1
 
-local class = {}
-
-class.NetworkTable = TankLib.Class and TankLib.Class.NetworkTable or {}
-class.Instances = TankLib.Class and TankLib.Class.Instances or setmetatable({}, {
-	__mode = "k"
-})
-
-class.Classes = {}
-class.Mixins = {}
+local class = TankLib.Class or {
+	NetworkTable = {},
+	Instances = setmetatable({}, {
+		__mode = "k"
+	}),
+	Classes = {},
+	Mixins = {}
+}
 
 local function _CreateIndexWrapper(aClass, func)
 	if not func then
