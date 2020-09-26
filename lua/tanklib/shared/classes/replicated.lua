@@ -40,7 +40,7 @@ else
 		instance:Initialize(...)
 		instance:Replicate()
 
-		TankLib.Class.Instances[instance] = true -- Used for lookups and as a 'ready' indicator
+		TankLib.Class.Instances[instance] = true -- Used as a 'ready' indicator
 		TankLib.Class.NetworkTable[instance.NetworkID] = instance
 
 		return instance
@@ -76,21 +76,37 @@ end
 function class:NetworkVarChanged(var, old, new)
 end
 
+function class:Destroy()
+	if SERVER then
+		TankLib.Class.NetworkTable[self.NetworkID] = nil
+
+		TankLib.Netstream:Send("TankLib.Replicated.Destroy", self.NetworkID)
+	end
+end
+
 if SERVER then
 	function class:Replicate(targets)
 		if not targets then
 			targets = player.GetReady()
-		elseif isentity(targets) then
-			targets = {targets}
 		end
 
-		if #targets > 0 then
-			TankLib.Netstream:Send("TankLib.Replicated.Replicate", {
-				ID = self.NetworkID,
-				Class = self.Class.Name,
-				Vars = self.NetworkVars
-			}, targets)
+		TankLib.Netstream:Send("TankLib.Replicated.Replicate", {
+			ID = self.NetworkID,
+			Class = self.Class.Name,
+			Vars = self.NetworkVars
+		}, targets)
+	end
+
+	function class:RemoteCall(func, targets, ...)
+		if not targets then
+			targets = player.GetReady()
 		end
+
+		TankLib.Netstream:Send("TankLib.Replicated.RPC", {
+			ID = self.NetworkID,
+			Func = self.NetworkVars,
+			Args = {...}
+		}, targets)
 	end
 
 	hook.Add("TankLib.PlayerReady", "TankLib.Replicated", function(ply)
@@ -101,14 +117,21 @@ if SERVER then
 end
 
 if CLIENT then
-	TankLib.Netstream:Hook("TankLib.Replicated.NetworkVar", function(data)
-		local instance = TankLib.Class.NetworkTable[data.ID]
-
-		instance:SetNetworkVar(data.Key, data.Val)
+	TankLib.Netstream:Hook("TankLib.Replicated.Destroy", function(id)
+		TankLib.Class.NetworkTable[id]:Destroy()
 	end)
 
 	TankLib.Netstream:Hook("TankLib.Replicated.Replicate", function(data)
+		PrintTable(data)
 		TankLib.Class:GetByName(data.Class)(data.ID, data.Vars)
+	end)
+
+	TankLib.Netstream:Hook("TankLib.Replicated.NetworkVar", function(data)
+		TankLib.Class.NetworkTable[data.ID]:SetNetworkVar(data.Key, data.Val)
+	end)
+
+	TankLib.Netstream:Hook("TankLib.Replicated.RPC", function(data)
+		TankLib.Class.NetworkTable[data.ID][data.Func](instance, unpack(data.Args))
 	end)
 end
 
