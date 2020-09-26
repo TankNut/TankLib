@@ -122,7 +122,6 @@ if CLIENT then
 	end)
 
 	TankLib.Netstream:Hook("TankLib.Replicated.Replicate", function(data)
-		PrintTable(data)
 		TankLib.Class:GetByName(data.Class)(data.ID, data.Vars)
 	end)
 
