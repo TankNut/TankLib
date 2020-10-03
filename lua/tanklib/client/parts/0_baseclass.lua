@@ -91,7 +91,7 @@ function class:GetRenderPos()
 	if modes[2] == TRANSLATE_RELATIVE then
 		ang = relative[2]
 	elseif modes[2] == TRANSLATE_ABSOLUTE then
-		ang = ang + self.Ang
+		ang = self.Ang
 	end
 
 	return pos, ang
