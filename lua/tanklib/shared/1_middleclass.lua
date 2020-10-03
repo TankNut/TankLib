@@ -195,6 +195,10 @@ function class:GetByName(name)
 	return self.Classes[name]
 end
 
+function class:GetNetworked(id)
+	return self.NetworkTable[id]
+end
+
 TankLib.Class = class
 TankLib:LoadFolder("mixins")
 TankLib:LoadFolder("classes")
