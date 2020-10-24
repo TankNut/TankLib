@@ -9,6 +9,7 @@ function class:Initialize()
 	self.Skin = 0
 
 	self.Scale = 1
+	self.Material = ""
 
 	self.Bonemerge = false
 
@@ -42,6 +43,9 @@ function class:GetCentered() return self.Center end
 function class:SetScale(scale) self.Scale = scale self:CreateEntity() end
 function class:GetScale() return self.Scale end
 
+function class:SetMaterial(mat) self.Material = mat self:CreateEntity() end
+function class:GetMaterial() return self.Material end
+
 function class:CreateEntity()
 	if IsValid(self.Entity) then
 		self.Entity:Remove()
@@ -53,6 +57,7 @@ function class:CreateEntity()
 	self.Entity:SetSkin(self.Skin)
 
 	self.Entity:SetModelScale(self.Scale)
+	self.Entity:SetMaterial(self.Material)
 
 	if self.Bonemerge then
 		self.Entity:SetParent(self.Parent)
@@ -94,7 +99,7 @@ end
 function class:GetBonePosition(bone)
 	local pos, ang = TankLib.Part.Baseclass.GetBonePosition(self, bone)
 
-	if IsValid(self.Entity) and self.Bone then
+	if IsValid(self.Entity) and bone then
 		self.Entity:SetPos(pos)
 		self.Entity:SetAngles(ang)
 
