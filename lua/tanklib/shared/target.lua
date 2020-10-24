@@ -17,10 +17,6 @@ end
 target.Functions["npc_headcrab"] = headcrab
 target.Functions["npc_headcrab_fast"] = headcrab
 target.Functions["npc_headcrab_black"] = headcrab
-
-target.Functions["npc_headcrab"] = headcrab
-target.Functions["npc_headcrab_fast"] = headcrab
-target.Functions["npc_headcrab_black"] = headcrab
 target.Functions["npc_headcrab_poison"] = headcrab
 
 local function antlion(ent)
