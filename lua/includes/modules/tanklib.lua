@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 TankLib = {}
 
 local root = "TankLib"
