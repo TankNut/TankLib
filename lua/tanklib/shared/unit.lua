@@ -1,6 +1,6 @@
 local unit = {}
 
-local function convert(tab, val, from, to)
+function unit:Convert(tab, val, from, to)
 	val = isnumber(tab[from]) and val * tab[from] or tab[from].From(val)
 
 	return isnumber(tab[to]) and val / tab[to] or tab[to].To(val)
@@ -24,7 +24,7 @@ unit.Length = { -- Default unit: Meter
 }
 
 function unit:ConvertLength(val, from, to)
-	return convert(self.Length, val, from, to)
+	return self:Convert(self.Length, val, from, to)
 end
 
 unit.Temperature = { -- Default unit: Kelvin
@@ -42,7 +42,7 @@ unit.Temperature = { -- Default unit: Kelvin
 }
 
 function unit:ConvertTemperature(val, from, to)
-	return convert(self.Temperature, val, from, to)
+	return self:Convert(self.Temperature, val, from, to)
 end
 
 unit.Mass = { -- Default unit: Kilogram
@@ -56,7 +56,7 @@ unit.Mass = { -- Default unit: Kilogram
 }
 
 function unit:ConvertMass(val, from, to)
-	return convert(self.Mass, val, from, to)
+	return self:Convert(self.Mass, val, from, to)
 end
 
 TankLib.Unit = unit
