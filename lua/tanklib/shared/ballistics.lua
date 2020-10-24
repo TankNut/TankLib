@@ -314,4 +314,26 @@ function ballistics:SolveMovingLateral(origin, target, targetvel, vel, height)
 	return true, vec, gravity
 end
 
+function ballistics:ToSpread(degrees)
+	return math.rad(degrees * 0.5)
+end
+
+function ballistics:ToDegrees(spread)
+	return math.deg(spread) * 2
+end
+
+-- Diameter is the diameter of the target you want to hit in hammer units
+function ballistics:GetEffectiveRange(degrees, diameter)
+	if diameter then
+		diameter = diameter / 0.75 -- Convert to inches
+	else
+		diameter = 12 -- Default CS:GO value
+	end
+
+	local MOA = degrees * 60 -- Convert to minute of angle, 1 MOA = 1/60th of a degree
+	local yards = (diameter * 100) / MOA
+
+	return yards * 27 -- Yards to inches -> x36, inches to units -> x0.75, 0.75 * 36 = 27
+end
+
 TankLib.Ballistics = ballistics
