@@ -118,7 +118,7 @@ function class:Angle()
 
 	local y = Vector(
 		(2 * q2 * q3) - (2 * q4 * q1),
-		(q1 * q1) - (q2 * q2) + (q3 * q3) - (q4 * q4)
+		(q1 * q1) - (q2 * q2) + (q3 * q3) - (q4 * q4),
 		(2 * q2 * q1) + (2 * q3 * q4)
 	)
 
