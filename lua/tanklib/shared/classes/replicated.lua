@@ -77,9 +77,9 @@ function class:NetworkVarChanged(var, old, new)
 end
 
 function class:Destroy()
-	if SERVER then
-		TankLib.Class.NetworkTable[self.NetworkID] = nil
+	TankLib.Class.NetworkTable[self.NetworkID] = nil
 
+	if SERVER then
 		TankLib.Netstream:Send("TankLib.Replicated.Destroy", self.NetworkID)
 	end
 end
