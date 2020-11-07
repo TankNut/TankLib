@@ -164,7 +164,7 @@ end
 function ballistics:GetRange(vel, gravity, height)
 	local ang = math.rad(45)
 	local cos = math.cos(ang)
-	local sin = math.cos(sin)
+	local sin = math.sin(ang)
 
 	return (vel * cos / gravity) * (vel * sin + math.sqrt(vel * vel * sin * sin + 2 * gravity * height))
 end
