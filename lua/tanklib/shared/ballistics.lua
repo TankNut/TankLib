@@ -336,4 +336,17 @@ function ballistics:GetEffectiveRange(degrees, diameter)
 	return yards * 27 -- Yards to inches -> x36, inches to units -> x0.75, 0.75 * 36 = 27
 end
 
+function ballistics:GetRequiredSpread(range, diameter)
+	if diameter then
+		diameter = diameter / 0.75 -- Convert to inches
+	else
+		diameter = 12 -- Default CS:GO value
+	end
+	
+	local yards = (range / 0.75) / 36
+	local MOA = (diameter * 100) / yards
+	
+	return MOA / 60
+end
+
 TankLib.Ballistics = ballistics
