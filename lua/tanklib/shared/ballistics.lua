@@ -166,7 +166,7 @@ function ballistics:GetRange(vel, gravity, height)
 	local cos = math.cos(ang)
 	local sin = math.sin(ang)
 
-	return (vel * cos / gravity) * (vel * sin + math.sqrt(vel * vel * sin * sin + 2 * gravity * height))
+	return (vel * cos / gravity) * (vel * sin + math.sqrt(vel^2 * sin^2 + 2 * gravity * height))
 end
 
 function ballistics:SolveStatic(origin, target, vel, gravity)
@@ -175,12 +175,9 @@ function ballistics:SolveStatic(origin, target, vel, gravity)
 
 	local dist = diff2:Length()
 
-	local vel2 = vel * vel
-	local vel4 = vel * vel * vel * vel
-
 	local gx = gravity * dist
 
-	local root = vel4 - gravity * (gravity * dist * dist + 2 * diff.z * vel2)
+	local root = vel^4 - gravity * (gravity * dist * dist + 2 * diff.z * vel^2)
 
 	if root < 0 then
 		return 0

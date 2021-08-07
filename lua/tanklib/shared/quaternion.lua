@@ -96,6 +96,10 @@ function class.__sub(a, b)
 	return class:New(a[1] - b[1], a[2] - b[2], a[3] - b[3], a[4] - b[4])
 end
 
+function class.__mul(a, b)
+	return class:New(unpack(qmul(a, b)))
+end
+
 -- Methods
 
 function class:Angle()
@@ -141,4 +145,4 @@ function class:Angle()
 	return Angle(ang.p, ang.y, roll)
 end
 
-TankLib.Quarternion = class
+TankLib.Quaternion = class
