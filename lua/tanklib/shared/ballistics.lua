@@ -319,12 +319,14 @@ function ballistics:ToDegrees(spread)
 	return math.deg(spread) * 2
 end
 
+local csgo = 12 -- Per https://old.reddit.com/r/GlobalOffensive/comments/2eq73n/gun_accuracy/ck2cbrq/: 30 cm ≈ 12 units
+
 -- Diameter is the diameter of the target you want to hit in hammer units
 function ballistics:GetEffectiveRange(degrees, diameter)
 	if diameter then
 		diameter = diameter / 0.75 -- Convert to inches
 	else
-		diameter = 12 -- Default CS:GO value
+		diameter = csgo
 	end
 
 	local MOA = degrees * 60 -- Convert to minute of angle, 1 MOA = 1/60th of a degree
@@ -337,7 +339,7 @@ function ballistics:GetRequiredSpread(range, diameter)
 	if diameter then
 		diameter = diameter / 0.75 -- Convert to inches
 	else
-		diameter = 12 -- Default CS:GO value
+		diameter = csgo
 	end
 	
 	local yards = (range / 0.75) / 36
